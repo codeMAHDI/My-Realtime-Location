@@ -1,0 +1,50 @@
+1. Google MAP Key Collection
+2. Android XML File MAP Key Set
+   under application tag->
+   <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyANwoPIkdtRGU7JUQeG8wFvpQvgjqhczzs"/>
+   Outside application tag->(For location permission)
+       <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+       <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+3. IOS File MAP Key Set
+   	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need access to your location to show your current position on the map.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need access to your location to always track your position.</string>
+4. Packages
+    - flutter_bloc(for map state manage)
+    - google_maps_flutter(to show the map view)
+    - geolocator(to catch the location)
+    - permission_handler(Permission manage-pop up for permission)
+5. Current Location Tracking - LocationCubit (location manage means-Lat,Long)
+   LocationCubit():super(null)//Initially null because when app load for the first time the location is actually null. but when user give the permission then app grab this location. Then it will not be null.
+   // Get Current Location
+     Future<void> fetchCurrentLocation() async{
+       PermissionStatus permissionStatus= await Permission.location.request();//When do we get the location. Only If user give the location permission.
+       if(permissionStatus==PermissionStatus.granted){
+         // Only then we'll get the Geo-location lat, long
+         //Now how to grab current location using Geo-locator
+         Position position= await Geolocator.getCurrentPosition(//Store on Position to get the lat, long property
+           desiredAccuracy:  LocationAccuracy.high,);
+         print("Lat"+position.latitude.toString());
+         print("Lon"+position.longitude.toString());
+         Then , if it's granted then emit this->
+         emit(LatLng(position.latitude,position.longitude));
+         LatLng is object.From where it(LatLng) will came in Cubit.
+         So that's why when we execute the cubit method we change the Cubit
+         type->
+         class LocationCubit extends Cubit<LatLng?>
+         This  LatLng object will came from google_map. Each of the
+         position in map is called lat, long.
+       }else{
+       emit(null);
+
+       }
+     }
+6. Apply The Bloc In Our App
+   Create MapScreen.
+   BlocBuilder<LocationCubit, LatLng?>// Cubit name, and the LocationCubit will return latlng.
+7. Call Current Location Method
+8. Show The Current Location Inside Google Map
+9. Create a Map Location Refresh Button
+   floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

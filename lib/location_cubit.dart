@@ -5,7 +5,6 @@ import 'package:permission_handler/permission_handler.dart';
 class LocationCubit extends Cubit<LatLng?> {
   LocationCubit() : super(null);
 
-
   Future<void> fetchCurrentLocation() async {
     PermissionStatus permissionStatus = await Permission.location.request();
     if (permissionStatus == PermissionStatus.granted) {
